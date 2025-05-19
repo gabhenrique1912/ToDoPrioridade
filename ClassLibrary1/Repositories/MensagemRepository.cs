@@ -22,6 +22,7 @@ namespace ClassLibrary1.Repositories
         {
             if (mensagem == null) return false;
             sqlContext.Mensagens.Add(mensagem);
+            
             sqlContext.SaveChanges();
             return true;
         }

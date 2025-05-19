@@ -30,7 +30,7 @@ public class Subscriber
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
                 var queueName = ea.RoutingKey; // Obtém o nome da fila
-                string priority = queueName.Replace("fila.prioridade.", "Fila de prioridade ");
+                string priority = queueName.Replace("fila.prioridades", "Fila de prioridade ");
 
                 Console.WriteLine($"{priority}: {message} ");
                 Thread.Sleep(1000);

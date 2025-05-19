@@ -36,8 +36,6 @@ namespace ClassLibrary3
             //Põe os dados na fila : product
             channel.BasicPublish(exchange: "", routingKey: "PriorityQueue", body: body);
 
-            Console.WriteLine("Teste");
-
         }
     }
 }
