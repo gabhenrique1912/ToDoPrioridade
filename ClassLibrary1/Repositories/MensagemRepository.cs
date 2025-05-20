@@ -10,9 +10,6 @@ namespace ClassLibrary1.Repositories
     public class MensagemRepository : IMensagemRepository
     {
         private readonly SqlContext sqlContext;
-
-
-
         public MensagemRepository()
         {
             sqlContext = new SqlContext();
@@ -20,8 +17,8 @@ namespace ClassLibrary1.Repositories
 
         public bool AddMensagem(Mensagem mensagem)
         {
-            if (mensagem == null) return false;
-            sqlContext.Mensagens.Add(mensagem);
+
+            var result = sqlContext.Mensagens.Add(mensagem);
             
             sqlContext.SaveChanges();
             return true;

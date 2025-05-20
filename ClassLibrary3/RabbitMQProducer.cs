@@ -28,7 +28,8 @@ namespace ClassLibrary3
                                                  durable: false,
                                                  exclusive: false,
                                                  autoDelete: false,
-                                                 arguments: null); 
+                                                 arguments: null);
+
             //Serializa a mensagem
             var json = JsonSerializer.Serialize(message);
             var body = Encoding.UTF8.GetBytes(json);

@@ -1,4 +1,5 @@
-﻿using ClassLibrary1.Repositories;
+﻿using ClassLibrary1;
+using ClassLibrary1.Repositories;
 using ClassLibrary3;
 using System;
 
@@ -10,9 +11,10 @@ namespace API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddDbContext<SqlContext>();
+            builder.Services.AddControllers();
             builder.Services.AddScoped<IMensagemRepository, MensagemRepository>();
             builder.Services.AddScoped<IRabbitMQProducer, RabbitMQProducer>();
-            builder.Services.AddControllers();
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
