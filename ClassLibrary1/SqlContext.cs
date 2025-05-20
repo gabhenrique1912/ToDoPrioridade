@@ -14,7 +14,7 @@ namespace ClassLibrary1
         {
             optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=ToDo;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
         }
-
+        //a
         public DbSet<Mensagem> Mensagens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

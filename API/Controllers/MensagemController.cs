@@ -9,10 +9,12 @@ namespace API.Controllers
     public class MensagemController : ControllerBase
     {
         private readonly IMensagemRepository _context;
+        private readonly IRabbitMQProducer _rabbitMQProducer;
 
-        public MensagemController(IMensagemRepository context)
+        public MensagemController(IMensagemRepository context, IRabbitMQProducer rabitMQProducer)
         {
             _context = context;
+            _rabbitMQProducer = rabitMQProducer;
         }
 
         [HttpGet]
@@ -38,7 +40,8 @@ namespace API.Controllers
 
         public ActionResult<Mensagem> AddMensagem(Mensagem mensagem)
         {
-            _context.AddMensagem(mensagem);
+            var mensagemPost = _context.AddMensagem(mensagem);
+            _rabbitMQProducer.SendProductMessage(mensagemPost);
             return CreatedAtAction(nameof(GetMensagemById), new { id = mensagem.Id }, mensagem); // Use nameof para evitar erros de string
         }
 

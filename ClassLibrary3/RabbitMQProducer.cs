@@ -35,7 +35,7 @@ namespace ClassLibrary3
             var body = Encoding.UTF8.GetBytes(json);
 
             //Põe os dados na fila : product
-            channel.BasicPublish(exchange: "", routingKey: "PriorityQueue", body: body);
+            channel.BasicPublish(exchange: "", routingKey: "fila.prioridades", body: body);
 
         }
     }
