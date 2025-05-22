@@ -11,7 +11,7 @@ namespace ClassLibrary2
         public int Id { get; set; }
         public string? Tarefa { get; set; }
         public string? Descricao { get; set; }
-        public int Prioridade { get; set; }
+        public byte Prioridade { get; set; }
 
     }
 }

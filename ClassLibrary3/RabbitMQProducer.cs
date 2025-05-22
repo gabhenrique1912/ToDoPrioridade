@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -22,6 +24,18 @@ namespace ClassLibrary3
             using var channel = connection.CreateModel();
 
             string PriorityQueue = "fila.prioridades";
+            
+            
+
+
+            var args = new Dictionary<string, object>
+            {
+                { "x-max-priority", 10 } 
+            };
+
+
+            //var props = channel.CreateBasicProperties();
+            //props.Priority = message.Prioridade;
 
 
             channel.QueueDeclare(queue: PriorityQueue,
@@ -30,12 +44,13 @@ namespace ClassLibrary3
                                                  autoDelete: false,
                                                  arguments: null);
 
+           
             //Serializa a mensagem
             var json = JsonSerializer.Serialize(message);
             var body = Encoding.UTF8.GetBytes(json);
 
-            //Põe os dados na fila : product
             channel.BasicPublish(exchange: "", routingKey: "fila.prioridades", body: body);
+
 
         }
     }

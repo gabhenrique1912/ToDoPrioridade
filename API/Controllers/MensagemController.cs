@@ -1,6 +1,8 @@
 ﻿using ClassLibrary2;
 using ClassLibrary3;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
+using System.Threading.Channels;
 
 namespace API.Controllers
 {
@@ -42,6 +44,7 @@ namespace API.Controllers
         {
             var mensagemPost = _context.AddMensagem(mensagem);
             _rabbitMQProducer.SendProductMessage(mensagemPost);
+
             return CreatedAtAction(nameof(GetMensagemById), new { id = mensagem.Id }, mensagem); // Use nameof para evitar erros de string
         }
 

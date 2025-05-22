@@ -1,7 +1,9 @@
-﻿using RabbitMQ.Client;
+﻿using ClassLibrary2;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 public class Subscriber
@@ -18,7 +20,15 @@ public class Subscriber
         {
             // Declarar a fila da qual você quer consumir (use o mesmo nome do Publisher)
             string PriorityQueue = "fila.prioridades";
+            string NoPriorityQueue = "fila.sem.prioridade";
+
             channel.QueueDeclare(queue: PriorityQueue,
+                                 durable: false,
+                                 exclusive: false,
+                                 autoDelete: false,
+                                 arguments: null);
+
+            channel.QueueDeclare(queue: NoPriorityQueue,
                                  durable: false,
                                  exclusive: false,
                                  autoDelete: false,
@@ -30,10 +40,42 @@ public class Subscriber
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
                 var queueName = ea.RoutingKey; // Obtém o nome da fila
-                string priority = queueName.Replace("fila.prioridades", "Fila de prioridade ");
 
-                Console.WriteLine($"{priority}: {message} ");
-                Thread.Sleep(1000);
+                string replace = message.Replace("}", " ");
+                string replace2 = replace.Replace("{", " ");
+                string replace3 = replace2.Replace("\"", " ");
+                string trim = replace3.Trim();
+
+                int indexId = trim.IndexOf(':');
+                int indexId2 = trim.IndexOf(',');
+                int comprimentoId = indexId2 - indexId;
+                string id = trim.Substring(indexId, comprimentoId).Trim();
+                string id2 = id.Remove(0, 1);
+
+                int indexTarefa = trim.IndexOf(':', indexId + 1);
+                int indexTarefa2 = trim.IndexOf(',', indexId2 + 1);
+                int comprimentoTarefa = indexTarefa2 - indexTarefa;
+                string tarefa = trim.Substring(indexTarefa, comprimentoTarefa);
+                string tarefa2 = tarefa.Remove(0, 2);
+
+                int indexDescricao = trim.IndexOf(':', indexTarefa + 1);
+                int indexDescricao2 = trim.IndexOf(',', indexTarefa2 + 1);
+                int comprimentoDescricao = indexDescricao2 - indexDescricao;
+                string descricao = trim.Substring(indexDescricao, comprimentoDescricao);
+                string descricao2 = descricao.Remove(0, 2);
+
+                int indexPrioridade = trim.LastIndexOf(':');
+                string prioridade = trim.Substring(indexPrioridade + 1).Trim();
+
+                Console.Clear();
+                Console.WriteLine($"Tarefas com prioridade\n");
+
+                Console.WriteLine($"Id: {id2}");
+                Console.WriteLine($"Tarefa: {tarefa2}");
+                Console.WriteLine($"Descrição: {descricao2}");
+                Console.WriteLine($"Prioridade: {prioridade}");
+
+
 
                 //Confirma o recebimento
                 channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
@@ -44,7 +86,11 @@ public class Subscriber
                                  autoAck: false,
                                  consumer: consumer);
 
-           
+            channel.BasicConsume(queue: NoPriorityQueue,
+                                 autoAck: false,
+                                 consumer: consumer);
+
+
 
             Console.WriteLine(" [*] Aguardando mensagens...");
             Console.ReadKey();
