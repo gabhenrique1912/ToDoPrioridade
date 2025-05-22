@@ -15,13 +15,11 @@ namespace ClassLibrary1.Repositories
             sqlContext = new SqlContext();
         }
 
-        public bool AddMensagem(Mensagem mensagem)
+        public Mensagem AddMensagem(Mensagem mensagem) // ← Agora retorna Mensagem
         {
-
             var result = sqlContext.Mensagens.Add(mensagem);
-            
             sqlContext.SaveChanges();
-            return true;
+            return result.Entity; // Retorna a mensagem persistida
         }
 
         public bool DeleteMensagem(int id)
