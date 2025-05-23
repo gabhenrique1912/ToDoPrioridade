@@ -45,7 +45,16 @@ namespace API.Controllers
             var mensagemPost = _context.AddMensagem(mensagem);
             _rabbitMQProducer.SendProductMessage(mensagemPost);
 
-            return CreatedAtAction(nameof(GetMensagemById), new { id = mensagem.Id }, mensagem); // Use nameof para evitar erros de string
+            //if(mensagem.Prioridade == 0) {
+            //    
+            //}
+            //
+            //else if (mensagem.Prioridade == 1)
+            //{
+            //
+            //}
+
+                return CreatedAtAction(nameof(GetMensagemById), new { id = mensagem.Id }, mensagem); // Use nameof para evitar erros de string
         }
 
         [HttpPut("{id}")] // Especifica que este PUT espera um 'id' no path

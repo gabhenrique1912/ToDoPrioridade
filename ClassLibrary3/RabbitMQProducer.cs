@@ -1,4 +1,6 @@
-﻿using RabbitMQ.Client;
+﻿using ClassLibrary2;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,33 +25,38 @@ namespace ClassLibrary3
             var connection = factory.CreateConnection();
             using var channel = connection.CreateModel();
 
-            string PriorityQueue = "fila.prioridades";
-            
-            
+            var props = channel.CreateBasicProperties();
 
+            //pega a prioridade
+            int prioridade = 0;
 
-            var args = new Dictionary<string, object>
+            if (message is Mensagem mensagem)
             {
-                { "x-max-priority", 10 } 
-            };
+                prioridade = mensagem.Prioridade;
+            }
 
+            props.Priority = (byte)prioridade;
 
-            //var props = channel.CreateBasicProperties();
-            //props.Priority = message.Prioridade;
+            
+
+            string PriorityQueue = "fila.prioridades";
+
 
 
             channel.QueueDeclare(queue: PriorityQueue,
-                                                 durable: false,
-                                                 exclusive: false,
-                                                 autoDelete: false,
-                                                 arguments: null);
+                                 durable: false,
+                                 exclusive: false,
+                                 autoDelete: false,
+                                 arguments: new Dictionary<string, object> {
+                {"x-max-priority", 1 }
+            });
 
-           
-            //Serializa a mensagem
+
+
             var json = JsonSerializer.Serialize(message);
             var body = Encoding.UTF8.GetBytes(json);
 
-            channel.BasicPublish(exchange: "", routingKey: "fila.prioridades", body: body);
+            channel.BasicPublish(exchange: "", routingKey: "fila.prioridades", basicProperties: props, body: body);
 
 
         }

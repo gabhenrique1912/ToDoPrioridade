@@ -2,9 +2,11 @@
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Channels;
 
 public class Subscriber
 {
@@ -20,19 +22,22 @@ public class Subscriber
         {
             // Declarar a fila da qual você quer consumir (use o mesmo nome do Publisher)
             string PriorityQueue = "fila.prioridades";
-            string NoPriorityQueue = "fila.sem.prioridade";
+
+
+
+
 
             channel.QueueDeclare(queue: PriorityQueue,
                                  durable: false,
                                  exclusive: false,
                                  autoDelete: false,
-                                 arguments: null);
+                                 arguments: new Dictionary<string, object> {
+                {"x-max-priority", 1 }
+            });
 
-            channel.QueueDeclare(queue: NoPriorityQueue,
-                                 durable: false,
-                                 exclusive: false,
-                                 autoDelete: false,
-                                 arguments: null);
+            channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
+
+
 
             var consumer = new EventingBasicConsumer(channel);
             consumer.Received += (model, ea) =>
@@ -67,14 +72,12 @@ public class Subscriber
                 int indexPrioridade = trim.LastIndexOf(':');
                 string prioridade = trim.Substring(indexPrioridade + 1).Trim();
 
-                Console.Clear();
-                Console.WriteLine($"Tarefas com prioridade\n");
-
                 Console.WriteLine($"Id: {id2}");
                 Console.WriteLine($"Tarefa: {tarefa2}");
                 Console.WriteLine($"Descrição: {descricao2}");
-                Console.WriteLine($"Prioridade: {prioridade}");
+                Console.WriteLine($"Prioridade: {prioridade}\n");
 
+                Thread.Sleep(7000); // 7 segundos pra simular processamento
 
 
                 //Confirma o recebimento
@@ -86,13 +89,11 @@ public class Subscriber
                                  autoAck: false,
                                  consumer: consumer);
 
-            channel.BasicConsume(queue: NoPriorityQueue,
-                                 autoAck: false,
-                                 consumer: consumer);
 
 
 
-            Console.WriteLine(" [*] Aguardando mensagens...");
+
+            Console.WriteLine("[*] Aguardando mensagens...\n");
             Console.ReadKey();
         }
     }
