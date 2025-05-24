@@ -44,40 +44,37 @@ namespace API.Controllers
         {
             var mensagemPost = _context.AddMensagem(mensagem);
             _rabbitMQProducer.SendProductMessage(mensagemPost);
-
-            //if(mensagem.Prioridade == 0) {
-            //    
-            //}
-            //
-            //else if (mensagem.Prioridade == 1)
-            //{
-            //
-            //}
-
-                return CreatedAtAction(nameof(GetMensagemById), new { id = mensagem.Id }, mensagem); // Use nameof para evitar erros de string
+            
+            return CreatedAtAction(nameof(GetMensagemById), new { id = mensagem.Id }, mensagem); // Use nameof para evitar erros de string
         }
 
         [HttpPut("{id}")] // Especifica que este PUT espera um 'id' no path
         public IActionResult UpdateMensagem(int id, Mensagem mensagem)
         {
-            if (id != mensagem.Id)
-                return BadRequest("Id não encontrado");
             var existingMensagem = _context.GetMensagemById(id);
             if (existingMensagem == null)
-                return NotFound("Id não encontrado");
-            _context.UpdateMensagem(id, mensagem);
-            return NoContent();
+                return NotFound("Id não encontrado...");
+            else
+            {
+                _context.UpdateMensagem(id, mensagem);
+                return Ok("Mensagem atualizada com sucesso...");
+            }
+                
         }
 
         [HttpDelete("{id}")] // Especifica que este DELETE espera um 'id' no path
         public IActionResult DeleteMensagem(int id)
         {
             var mensagem = _context.GetMensagemById(id);
-            if (mensagem == null)
-                return NotFound("Id não encontrado");
-
-            _context.DeleteMensagem(id);
-            return Ok("Mensagem deletada com sucesso");
+            if (mensagem == null) { 
+                return NotFound("Id não encontrado...");
+            }
+            else
+            {
+                _context.DeleteMensagem(id);
+                return Ok("Mensagem deletada com sucesso...");
+            }
+                
         }
     }
 }

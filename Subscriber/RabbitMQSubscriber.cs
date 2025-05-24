@@ -72,6 +72,13 @@ public class Subscriber
                 int indexPrioridade = trim.LastIndexOf(':');
                 string prioridade = trim.Substring(indexPrioridade + 1).Trim();
 
+                //if (prioridade != "0" && prioridade != "1")
+                //{
+                //    Console.Write("Somente prioridades 0 ou 1 são aceitas...");
+                //    Thread.Sleep(4000);
+                //    Environment.Exit(0);
+                //}
+
                 Console.WriteLine($"Id: {id2}");
                 Console.WriteLine($"Tarefa: {tarefa2}");
                 Console.WriteLine($"Descrição: {descricao2}");

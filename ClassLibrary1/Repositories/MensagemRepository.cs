@@ -15,7 +15,7 @@ namespace ClassLibrary1.Repositories
             sqlContext = new SqlContext();
         }
 
-        public Mensagem AddMensagem(Mensagem mensagem) // ← Agora retorna Mensagem
+        public Mensagem AddMensagem(Mensagem mensagem) 
         {
             var result = sqlContext.Mensagens.Add(mensagem);
             sqlContext.SaveChanges();
@@ -24,9 +24,9 @@ namespace ClassLibrary1.Repositories
 
         public bool DeleteMensagem(int id)
         {
-            if (id <= 0) return false;
             var mensagem = sqlContext.Mensagens.Find(id);
             sqlContext.Mensagens.Remove(mensagem);
+            sqlContext.SaveChanges();
             return true;
         }
 
@@ -42,8 +42,16 @@ namespace ClassLibrary1.Repositories
 
         public void UpdateMensagem(int id, Mensagem mensagem)
         {
-            sqlContext.Mensagens.Update(mensagem);
+            var existente = sqlContext.Mensagens.Find(id);
+            if (existente == null) return;
+            
+            //desse jeito abaixo n atualiza o campo id e atualiza só os campos abaixo, evitando dar bug
+            existente.Tarefa = mensagem.Tarefa;
+            existente.Descricao = mensagem.Descricao;
+            existente.Prioridade = existente.Prioridade;
+
             sqlContext.SaveChanges();
         }
+
     }
 }
