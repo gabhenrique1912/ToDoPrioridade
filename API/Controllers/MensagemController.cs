@@ -19,8 +19,18 @@ namespace API.Controllers
             _rabbitMQProducer = rabitMQProducer;
         }
 
+        [HttpPost] // Este POST será mapeado para a rota base (/api/Mensagem)
+
+        public ActionResult<Mensagem> AddMensagem(Mensagem mensagem)
+        {
+            var mensagemPost = _context.AddMensagem(mensagem);
+            _rabbitMQProducer.SendProductMessage(mensagemPost);
+
+            return CreatedAtAction(nameof(GetMensagemById), new { id = mensagem.Id }, mensagem); // Usa nameof para evitar erros de string
+        }
+
         [HttpGet]
-        public ActionResult<List<Mensagem>> GetAllMensagens() // Renomeie para evitar confusão com o GetById
+        public ActionResult<List<Mensagem>> GetAllMensagens() 
         {
             return _context.GetAll();
         }
@@ -38,16 +48,6 @@ namespace API.Controllers
             return mensagem;
         }
 
-        [HttpPost] // Este POST será mapeado para a rota base (/api/Mensagem)
-
-        public ActionResult<Mensagem> AddMensagem(Mensagem mensagem)
-        {
-            var mensagemPost = _context.AddMensagem(mensagem);
-            _rabbitMQProducer.SendProductMessage(mensagemPost);
-            
-            return CreatedAtAction(nameof(GetMensagemById), new { id = mensagem.Id }, mensagem); // Use nameof para evitar erros de string
-        }
-
         [HttpPut("{id}")] // Especifica que este PUT espera um 'id' no path
         public IActionResult UpdateMensagem(int id, Mensagem mensagem)
         {
@@ -59,14 +59,15 @@ namespace API.Controllers
                 _context.UpdateMensagem(id, mensagem);
                 return Ok("Mensagem atualizada com sucesso...");
             }
-                
+
         }
 
         [HttpDelete("{id}")] // Especifica que este DELETE espera um 'id' no path
         public IActionResult DeleteMensagem(int id)
         {
             var mensagem = _context.GetMensagemById(id);
-            if (mensagem == null) { 
+            if (mensagem == null)
+            {
                 return NotFound("Id não encontrado...");
             }
             else
@@ -74,7 +75,15 @@ namespace API.Controllers
                 _context.DeleteMensagem(id);
                 return Ok("Mensagem deletada com sucesso...");
             }
-                
+
         }
+
+ 
+
+        
+
+        
+
+        
     }
 }

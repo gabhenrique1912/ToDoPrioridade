@@ -1,4 +1,5 @@
 ﻿using ClassLibrary2;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,8 +31,10 @@ namespace ClassLibrary1.Repositories
             return true;
         }
 
+
         public List<Mensagem> GetAll()
         {
+
             return sqlContext.Mensagens.ToList();
         }
 
